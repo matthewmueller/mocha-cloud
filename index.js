@@ -147,11 +147,11 @@ Cloud.prototype.start = function(fn){
       var browser = wd.remote('ondemand.saucelabs.com', 80, self.user, self.key);
       self.emit('init', conf);
 
-      browser.init(conf, function(){
+      browser.init(conf, function(_, id, session) {
         debug('open %s', self._url);
-        self.emit('start', conf);
+        self.emit('start', session);
 
-        browser.get(self._url, function(err){
+        browser.get(self._url, function(err) {
           if (err) {
             debug('browser.get(%s) error: %s', self.url, err);
             return done(err);
@@ -174,7 +174,7 @@ Cloud.prototype.start = function(fn){
             }
 
             debug('results %j', res);
-            self.emit('end', conf, res);
+            self.emit('end', session, res);
             var passed = !res.error && 0 == res.failures;
             browser.sauceJobStatus(passed, function(err) {
               debug('setting sauce job status: %s', passed ? 'pass' : 'fail');
